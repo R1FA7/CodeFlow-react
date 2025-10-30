@@ -1,0 +1,139 @@
+### Register a new user
+POST http://localhost:3000/api/v1/auth/signup
+Content-Type: application/json
+
+{
+  "name" : "test",
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "123456"
+}
+
+### Login user
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "login": "testuser",
+  "password": "12345"
+}
+
+### Logout user
+POST http://localhost:3000/api/v1/auth/logout
+
+### Get current user (protected route)
+GET http://localhost:3000/api/v1/auth
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgyMjcwNSwiZXhwIjoxNzYxOTA5MTA1fQ.nGY-S78Jotj3l9_xAozKmUwYKbJmXSdzIReaeZZ9xX
+
+### Update current user (protected route)
+POST http://localhost:3000/api/v1/auth
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+Content-Type: application/json
+
+{
+  "name": "testuser1",
+  "password": "12345",
+  "confirmPassword":"12345"
+}
+
+### Get current user overview (protected route)
+GET http://localhost:3000/api/v1/auth/user
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+
+
+### GET current user rating(protected route)
+GET http://localhost:3000/api/v1/auth/rating
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+
+### GET all past problems
+GET http://localhost:3000/api/v1/problems
+
+
+##GET single problem
+GET http://localhost:3000/api/v1/problems/64c55436c40e821813e98775
+
+
+### Get past contests
+GET http://localhost:3000/api/v1/contests/pastContests
+
+### Get upcoming contests
+GET http://localhost:3000/api/v1/contests/upcomingContests
+
+### Get current contests
+GET http://localhost:3000/api/v1/contests/currentContest
+
+### Get contest by round
+GET http://localhost:3000/api/v1/contests/12
+
+### Create new contest
+POST http://localhost:3000/api/v1/contests
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+
+{
+  "level": "Beginner",
+  "contestDate": "2025-11-01T15:00:00Z",
+  "duration": 7200000,
+  "problems": [
+    {
+      "id": "A1",
+      "title": "Sum Two Numbers",
+      "statement": "Read two numbers and print their sum",
+      "samples": 1,
+      "checker": "default",
+      "testCases": [
+        {"input": "1 2", "output": "3"},
+        {"input": "5 7", "output": "12"}
+      ]
+    }
+  ]
+}
+
+###Store shared code
+POST http://localhost:3000/api/v1/codeShare
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+
+{
+  "description": "Sum two numbers in C++",
+  "language": "cpp",
+  "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    cout << \"Enter two numbers: \";\n    cin >> a >> b;\n    int sum = a + b;\n    cout << \"Sum is: \" << sum << endl;\n    return 0;\n}"
+}
+
+
+###GET shared code
+GET http://localhost:3000/api/v1/codeShare/69036b830acd5c3cee663c1a
+
+
+###Get all submission
+GET http://localhost:3000/api/v1/submission
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+
+
+###Create a Submission
+POST http://localhost:3000/api/v1/submission
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+
+{
+  "code": "print('Hello World')",
+  "language": "py",
+  "problem": "6903683f30acb0c69f223d61",
+  "contest": "6903683f30acb0c69f223d63"
+}
+
+###playground(NOT WORKING)
+POST http://localhost:3000/api/v1/submission/playground
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDM0NWI3OGE2NzBmMzFlOGYyNjU3MyIsImlhdCI6MTc2MTgzMDU1OSwiZXhwIjoxNzYxOTE2OTU5fQ.WoIn2BHvDoheIkeMzpZIcYJNPXAmzlgxJ20ryQL4gWo
+
+{
+  "code": "print(input())",
+  "language": "py",
+  "input": "Hello"
+}
+
+
+###NEXT admin
+
