@@ -3,12 +3,13 @@ import { ApiError } from "../utils/ApiError.js";
 export const errorHandler = (err, req, res, next)=> {
   console.error('Error caught in error middleware', err)
 
-  if(err.name==='ValidationError' && err.inner){
+  if (err.name === "ZodError") {
+    console.log("HI",err)
     return res.status(400).json({
       success: false,
       message: "Validation failed",
-      errors: err.inner.map(e=>e.message)
-    })
+      errors: err.issues?.map(e => e.message) || [],
+    });
   }
 
   if(err instanceof ApiError){

@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import connectDB from './config/db.js'
+import { errorHandler } from './middlewares/errorHandler.js'
 import { adminRouter } from './routes/adminRouter.js'
 import { authRouter } from './routes/authRoutes.js'
 import { codeShareRouter } from './routes/codeShareRouter.js'
@@ -14,10 +15,13 @@ dotenv.config()
 
 const app = express()
 const port = 3000 
+const allowedOrigins =[
+  process.env.VITE_FRONTEND_URL
+]
 
 app.use(express.json())
-app.use(cors())
 app.use(cookieParser())
+app.use(cors({origin: allowedOrigins, credentials:true}))
 
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/problems',problemRouter)
@@ -28,6 +32,7 @@ app.use('/api/v1/admin', adminRouter)
 
 connectDB()
 
+app.use(errorHandler)
 
 app.get('/',(req,res)=>{
   res.send("YEEE")

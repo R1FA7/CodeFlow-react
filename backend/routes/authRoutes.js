@@ -5,7 +5,7 @@ import { verifyJWT } from '../middlewares/verifyJWT.js';
 const authRouter = express.Router()
 
 authRouter.post('/login', login)
-authRouter.post('/signup', signUp)
+authRouter.post('/register', signUp)
 authRouter.post('/logout', logout)
 authRouter.get('/', verifyJWT, getMe)
 authRouter.post('/', verifyJWT, updateMe)
