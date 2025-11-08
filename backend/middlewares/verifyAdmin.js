@@ -8,8 +8,10 @@ export async function verifyAdmin(req, res, next) {
     next();
   } catch (err) {
     console.error(err);
-    res.status(401).json({
-      error: "Unauthorized",
+    res.status(500).json({
+      success: false,
+      message:'Internal Server error',
+      error:err,
     });
   }
 }

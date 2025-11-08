@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser } from "../../../api/auth.js";
 import RegisterIllustrator from "../../../assets/Register.svg";
@@ -6,16 +7,14 @@ import { AuthForm } from "../components/AuthForm";
 
 export const RegisterPage = () => {
   const queryClient = useQueryClient();
-  const {
-    mutate: mutateRegister,
-    isPending,
-    error,
-  } = useMutation({
+  const navigate = useNavigate();
+  const { mutate: mutateRegister, isPending } = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
       queryClient.setQueryData(["currentUser"], data);
       console.log("DATA", data);
       toast.success(data.message);
+      navigate("/overview");
     },
     onError: (error) => {
       if (error.errors?.length) {
@@ -25,16 +24,8 @@ export const RegisterPage = () => {
       }
     },
   });
-  // const mutation = useMutation(registerUser, {
-  //   onSuccess: (data) => {
-  //     console.log("REG SUCCESS",data)
-  //   },
-  //   onError: (error) => {
-  //     console.error('Registration failed', error)
-  //   },
 
-  // })
-  const handleRegister = async (t) => {
+  const handleRegister = (t) => {
     console.log("REGISTER", t);
     mutateRegister(t);
   };
@@ -53,6 +44,7 @@ export const RegisterPage = () => {
             fields={["name", "email", "username", "password"]}
             onSubmit={(t) => handleRegister(t)}
             disabled={isPending}
+            isLoading={isPending}
           />
         </div>
       </div>

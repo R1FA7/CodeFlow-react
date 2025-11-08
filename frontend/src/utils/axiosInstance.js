@@ -17,10 +17,14 @@ axiosInstance.interceptors.response.use(
     const errors = resp?.errors || []
     const success = resp?.success ?? false 
     const statusCode = error?.status
-    // console.log(message, success, statusCode)
-    if(statusCode===401){
-      console.log('Unauthorized.From frontend.')
-      window.location.href = '/login'
+    console.log(message, success, statusCode)
+    if (error.response?.status === 401) {
+      // Only redirect if not on public pages
+      const publicPages = ["/", "/login", "/register",'/contests','/problemset','/playground','/unauthorized'];
+      console.log("HI")
+      if (!publicPages.includes(window.location.pathname)) {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject({
       message,

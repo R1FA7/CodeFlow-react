@@ -7,7 +7,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { contestSchema } from '../validations/contest.validation.js';
 
 export const getContest = asyncHandler(async(req,res)=>{
-  const contestData = await Contest.findOne({round:req.params.id}).populate('problems')
+  const contestData = await Contest.findById(req.params.id).populate('problems');
   if(!contestData) throw new ApiError(404, 'contest not found')
   const contest = {
     contestName: `Codeflow ${contestData.level} Contest ${contestData.round}`,
@@ -32,14 +32,16 @@ export const getPastContests = asyncHandler(async(req,res)=>{
         currentDate
       ]
     }
-  }).populate('problems')
+  }).populate('problems').populate('setter')
   const past = info.map((contest)=>({
-    round: contest.round,
+    id: contest._id,
+    date: contest.contestDate,
     contestName: `Codeflow ${contest.level} Contest ${contest.round}`,
     problems: contest.problems.map(({ _id, title }) => ({
         _id,
         title,
     })),
+    setter: contest.setter
   }))
   res.status(200).json(new ApiResponse(200,past,'Fetched past contests successfully'))
 })
@@ -57,9 +59,12 @@ export const getCurrentContest = asyncHandler(async(req,res)=>{
   }).populate('problems')
 
   const currentContests = info.map(contest=>({
+    id: contest._id,
     round: contest.round,
-    contestName: `Codeflow ${contest.level} Contest ${contest.round}`,
+    contestName: `Codeflow ${contest.level} Contest`,// ${contest.round}`,
     problems: contest.problems.map(({ _id, title }) => ({ _id, title })),
+    duration: contest.duration,
+    contestDate: contest.contestDate
   }))
 
   res.status(200).json(new ApiResponse(200,currentContests, 'Fetched current contests successfully'))
@@ -69,18 +74,21 @@ export const getUpcomingContests = asyncHandler(async(req,res)=>{
   const currentDate = new Date()
   const info = await Contest.find({
     contestDate:{$gt: currentDate}
-  }).select('level round contestDate duration').sort({contestDate:1})
-  const upcoming = info.map(({ level, round, contestDate, duration }) => ({
+  }).select('level round contestDate duration').sort({contestDate:1}).populate('setter')
+  const upcoming = info.map(({ level, round, contestDate, duration, setter }) => ({
       round,
       contestName: `Codeflow ${level} Contest ${round}`,
-      contestDate,
+      date:contestDate,
       duration,
+      setter
   }));
   res.status(200).json(new ApiResponse(200,upcoming, 'Fetched upcoming contests successfully'));
 })
 
 export const createContest = asyncHandler(async(req,res)=>{
+  console.log(req.body)
   const {level, problems, contestDate, duration} = contestSchema.parse(req.body)
+  console.log(level,problems,contestDate, duration)
 
   const round = await Contest.countDocuments()+1
 

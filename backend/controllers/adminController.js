@@ -1,4 +1,6 @@
 import Contest from "../models/contest.js";
+import Problem from "../models/problem.js";
+import TestCase from "../models/testcase.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -14,6 +16,7 @@ export const getAllContests = asyncHandler(async (req, res) => {
     problems: contest.problems.map((p) => ({
       charId: p.id,
       problemId: p._id,
+      problemTitle: p.title,
     })),
   }));
 
@@ -40,8 +43,23 @@ export const acceptContest = asyncHandler(async (req, res) => {
 
 export const rejectContest = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const contest = await Contest.findByIdAndDelete(id);
+
+  const contest = await Contest.findById(id)
   if (!contest) throw new ApiError(404, "Contest not found");
+
+  const problems = await Problem.find({
+    _id: {
+      $in:contest.problems
+    }
+  })
+  const tcIds = problems.flatMap(p=>p.testCases || [])
+
+  if (tcIds.length) await TestCase.deleteMany({ _id: { $in: tcIds } })
+
+  if(problems.length) await Problem.deleteMany({contest: contest._id})
+
+  await Contest.findByIdAndDelete(contest._id)
+
 
   res.status(200).json(new ApiResponse(200, null, "Contest rejected successfully"));
 });

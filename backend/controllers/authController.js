@@ -68,35 +68,45 @@ export const logout = asyncHandler(async(req,res)=>{
 export const getMe = asyncHandler(async(req,res)=>{
   const loggedUser = await User.findById(req.user.id)
   res.status(200).json(new ApiResponse(200,{
-    name: loggedUser.name, username: loggedUser.username, email: loggedUser.email
+    name: loggedUser.name, username: loggedUser.username, email: loggedUser.email, admin:loggedUser.admin || false, setter: loggedUser.setter 
   }, 'Fetched user successfully'))
 })
-
 export const updateMe = asyncHandler(async (req, res) => {
-  const { name, username, password, confirmPassword, email } = updateMeSchema.parse(req.body);
+  // Parse and validate - removes empty strings
+  const cleanedBody = Object.fromEntries(
+    Object.entries(req.body).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+  );
+
+  const validatedData = updateMeSchema.parse(cleanedBody);
 
   const loggedUser = await User.findById(req.user.id);
   if (!loggedUser) throw new ApiError(404, 'User not found');
 
-  // Check duplicates only for provided fields
+  // Check if at least one field is being updated
+  const hasUpdates = Object.keys(validatedData).some(
+    key => key !== 'confirmPassword' && validatedData[key]
+  );
+  
+  if (!hasUpdates) {
+    throw new ApiError(400, 'Please provide at least one field to update');
+  }
+
+  // Check for duplicates only for fields being updated
+  const { name, email, username, password, confirmPassword } = validatedData;
+  console.log(validatedData)
   const orConditions = [];
-  if (name) orConditions.push({ name });
   if (email) orConditions.push({ email });
   if (username) orConditions.push({ username });
 
-  if (orConditions.length) {
+  if (orConditions.length > 0) {
     const duplicate = await User.findOne({
       $or: orConditions,
       _id: { $ne: loggedUser._id }
     });
+    
     if (duplicate) {
-      const message =
-        duplicate.name === name
-          ? "Name already exists"
-          : duplicate.email === email
-          ? "Email already exists"
-          : "Username already exists";
-      throw new ApiError(409, message);
+      const field = duplicate.email === email ? 'Email' : 'Username';
+      throw new ApiError(409, `${field} already exists`);
     }
   }
 
@@ -104,40 +114,23 @@ export const updateMe = asyncHandler(async (req, res) => {
   if (name) loggedUser.name = name;
   if (username) loggedUser.username = username;
   if (email) loggedUser.email = email;
+  
   if (password) {
     if (password !== confirmPassword) throw new ApiError(400, 'Passwords do not match');
     loggedUser.password = password;
   }
 
   await loggedUser.save();
+  
   const safeUser = loggedUser.toObject();
   delete safeUser.password;
-  res.status(200).json(new ApiResponse(200, safeUser, "Profile updated successfully"));
+  
+  res.status(200).json(
+    new ApiResponse(200, safeUser, "Profile updated successfully")
+  );
 });
 
-
 export const getUserOverview=asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
-  if (!user) throw new ApiError(404, "User not found");
-
-  const [solvedProblemsCount, rating] = await Promise.all([
-    Submission.countDocuments({ submittedBy: user._id, message: "Accepted" }),
-    user.rating()
-  ]);
-
-  const data = {
-    rating,
-    admin: user.admin,
-    contestCount: user.transactions.length,
-    solvedProblemsCount,
-  };
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, data, "User overview data fetched successfully"));
-})
-
-export const getRatingHistory = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).populate({
     path: "transactions",
     model: "Transaction",
@@ -146,8 +139,22 @@ export const getRatingHistory = asyncHandler(async (req, res) => {
 
   if (!user) throw new ApiError(404, "User not found");
 
+  // Overview
+  const [solvedProblemsCount, rating] = await Promise.all([
+    Submission.countDocuments({ submittedBy: user._id, message: "Accepted" }),
+    user.rating(),
+  ]);
+
+  const overview = {
+    rating,
+    admin: user.admin,
+    contestCount: user.transactions.length,
+    solvedProblemsCount,
+  };
+
+  // rating history
   let cumulative = 0;
-  const ratingTimeline = user.transactions.map((t) => {
+  const ratingHistory = user.transactions.map((t) => {
     cumulative += t.delta;
     return {
       rating: cumulative,
@@ -155,7 +162,9 @@ export const getRatingHistory = asyncHandler(async (req, res) => {
     };
   });
 
+  const data = { overview, ratingHistory };
+
   return res
     .status(200)
-    .json(new ApiResponse(200, ratingTimeline, "User rating history fetched successfully"));
+    .json(new ApiResponse(200, data, "User overview data fetched successfully"));
 })

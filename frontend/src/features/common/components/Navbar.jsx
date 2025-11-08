@@ -1,22 +1,51 @@
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { logoutUser } from "../../../api/auth";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { GradientButton } from "./gradientButton";
 
 const NavLinks = [
-  { id: 1, name: "Contests", link: "#" },
-  { id: 2, name: "Problemset", link: "#" },
-  { id: 3, name: "Playground", link: "#" },
+  { id: 1, name: "Contests", link: "/contests" },
+  { id: 2, name: "Problemset", link: "/problemset" },
+  { id: 3, name: "Playground", link: "/playground" },
 ];
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { data: user } = useCurrentUser();
+
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: (response) => {
+      queryClient.setQueryData(["currentUser"], null);
+      queryClient.clear();
+      navigate("/");
+      toast.success(response?.message || "Logged out successfully");
+    },
+    onError: (error) => {
+      console.error("Logout error:", error);
+      toast.error(error?.message || "Logout failed");
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <nav className="bg-gray-900 text-gray-100 shadow-lg relative">
       <div className="max-w-7xl mx-auto flex justify-between items-center p-5">
         {/* Logo */}
-        <button className="font-bold text-2xl text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-800">
+        <button
+          onClick={() => navigate("/")}
+          className="font-bold text-2xl text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-800"
+        >
           CodeFlow
         </button>
 
@@ -27,7 +56,9 @@ export const Navbar = () => {
               key={nav.link}
               to={nav.link}
               className={({ isActive }) =>
-                `${isActive && "hover:text-indigo-400 transition-colors"}`
+                `hover:text-indigo-400 transition-colors ${
+                  isActive ? "text-indigo-400 font-semibold" : ""
+                }`
               }
             >
               {nav.name}
@@ -35,9 +66,25 @@ export const Navbar = () => {
           ))}
         </div>
 
-        {/* Desktop Login */}
+        {/* Desktop Auth Button */}
         <div className="hidden md:block">
-          <GradientButton className="px-6 py-3">Login</GradientButton>
+          {user?.data ? (
+            <GradientButton
+              className="px-6 py-3"
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+              loading={logoutMutation.isPending}
+            >
+              {logoutMutation.isPending ? "Logging out..." : "Logout"}
+            </GradientButton>
+          ) : (
+            <GradientButton
+              className="px-6 py-3"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </GradientButton>
+          )}
         </div>
 
         {/* Mobile Hamburger */}
@@ -68,7 +115,29 @@ export const Navbar = () => {
             </NavLink>
           ))}
           <div className="border-t border-gray-700 pt-3 mt-2">
-            <GradientButton className="px-6 py-3 w-full">Login</GradientButton>
+            {user?.data ? (
+              <GradientButton
+                className="w-full px-6 py-3"
+                onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}
+                disabled={logoutMutation.isPending}
+                loading={logoutMutation.isPending}
+              >
+                {logoutMutation.isPending ? "Logging out..." : "Logout"}
+              </GradientButton>
+            ) : (
+              <GradientButton
+                className="w-full px-6 py-3"
+                onClick={() => {
+                  navigate("/login");
+                  setIsOpen(false);
+                }}
+              >
+                Login
+              </GradientButton>
+            )}
           </div>
         </div>
       )}

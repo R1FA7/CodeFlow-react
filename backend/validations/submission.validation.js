@@ -9,3 +9,11 @@ export const submissionSchema = z.object({
   // submittedBy: z.string().length(24, "Invalid ObjectId"),
   message: z.string().optional(),
 })
+
+
+export const playgroundSubmissionSchema = z.object({
+  code: z.string().min(1),
+  language: z.string().min(1),
+  problem: z.string().optional(),
+  input: z.string().optional().default(''),
+});

@@ -13,7 +13,7 @@ import z from 'zod';
 
 export const contestSchema = z.object({
   level: z.enum(["Beginner", "Intermediate", "Expert"]),
-  contestDate: z.string().transform(str => new Date(str)),
+  contestDate: z.string().optional().transform(str => str?  new Date(str) : null),
   duration: z.number().positive(),
   problems: z.array(
     z.object({

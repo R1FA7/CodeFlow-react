@@ -5,6 +5,7 @@ import { verifyJWT } from "../middlewares/verifyJWT.js";
 const codeShareRouter = Router() 
 
 codeShareRouter.post('/', verifyJWT, storeCode)
-codeShareRouter.get('/:id', getCode)
+codeShareRouter.get('/:shareId', getCode)
 
 export { codeShareRouter };
+

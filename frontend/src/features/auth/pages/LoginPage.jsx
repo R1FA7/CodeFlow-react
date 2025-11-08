@@ -1,9 +1,33 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { loginUser } from "../../../api/auth";
 import LoginIllustrator from "../../../assets/Login.svg";
 import { AuthForm } from "../components/AuthForm";
 
 export const LoginPage = () => {
-  const handleLogin = async (t) => {
-    console.log(t); //this login form data
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { mutate: mutateLogin, isPending } = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["currentUser"], data);
+      console.log("From mutation", data);
+      toast.success(data.message);
+      navigate("/overview");
+    },
+    onError: (error) => {
+      if (error.errors?.length > 0) {
+        error.errors.forEach((err) => toast.error(err));
+      } else {
+        toast.error(error.message);
+      }
+    },
+  });
+
+  const handleLogin = (t) => {
+    console.log(t);
+    mutateLogin(t);
   };
   return (
     <div className="w-full flex min-h-screen font-sans text-gray-100">
@@ -33,6 +57,8 @@ export const LoginPage = () => {
             buttonText="Sign in"
             onSubmit={(t) => handleLogin(t)}
             fields={["login", "password"]}
+            disabled={isPending}
+            isLoading={isPending}
           />
         </div>
       </div>

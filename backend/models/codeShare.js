@@ -1,23 +1,39 @@
-import { Schema, SchemaTypes, model } from "mongoose";
-const codeShareSchema = new Schema({
-  description: {
+import mongoose from 'mongoose';
+
+const codeShareSchema = new mongoose.Schema({
+  shareId: {
     type: String,
     required: true,
+    unique: true,
+    index: true
   },
-  author: {
-    type: SchemaTypes.ObjectId,
-    ref: 'User',
-    required: true,
+  description: {
+    type: String,
+    default: ''
   },
   language: {
-    type: String, 
-    enum: ['java','cpp','py', 'js'],
-    default:'cpp'
+    type: String,
+    required: true
   },
   code: {
     type: String,
-    required: true,
+    required: true
+  },
+  stdin: {
+    type: String,
+    default: ''
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false // Allow anonymous sharing
+  },
+  views: {
+    type: Number,
+    default: 0
   }
-}, {timestamps: true})
+}, { 
+  timestamps: true 
+});
 
-export default model('CodeShare', codeShareSchema)
+export default mongoose.model('CodeShare', codeShareSchema);

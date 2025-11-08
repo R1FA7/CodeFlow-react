@@ -3,7 +3,7 @@ import { getMe } from "../api/auth"
 
 //instead of context API
 export const useCurrentUser = () => {
-  useQuery({
+  return useQuery({
     queryKey: ["currentUser"],
     queryFn: getMe,
     retry: 3,
