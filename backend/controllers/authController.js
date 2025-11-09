@@ -146,23 +146,26 @@ export const getUserOverview=asyncHandler(async (req, res) => {
 
   if (!user) throw new ApiError(404, "User not found");
 
+  const transactions = user.transactions || []
   // Overview
-  const [solvedProblemsCount, rating] = await Promise.all([
-    Submission.countDocuments({ submittedBy: user._id, message: "Accepted" }),
-    user.rating(),
-  ]);
+  const solvedProblemsCount = Number(
+    await Submission.countDocuments({ submittedBy: user._id, message: "Accepted" })
+  ) || 0;
+
+  const rating = Number(await user.rating()) || 0
 
   const overview = {
     rating,
     admin: user.admin,
-    contestCount: user.transactions.length,
+    contestCount: user.transactions.length || 0,
     solvedProblemsCount,
   };
 
   // rating history
   let cumulative = 0;
   const ratingHistory = user.transactions.map((t) => {
-    cumulative += t.delta;
+    const delta = Number(t.delta) || 0
+    cumulative += delta;
     return {
       rating: cumulative,
       contestDate: t.contest?.contestDate || null,
