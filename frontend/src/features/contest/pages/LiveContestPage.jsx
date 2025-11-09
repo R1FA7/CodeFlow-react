@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GradientButton } from "../../common/components/gradientButton";
+import { GradientButton } from "../../common/components/GradientButton";
 
 export function LiveContestPage({ liveContests }) {
   const [timeLeft, setTimeLeft] = useState({

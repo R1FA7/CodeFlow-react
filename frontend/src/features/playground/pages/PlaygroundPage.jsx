@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getSharedCode, storeCode } from "../../../api/codeShare";
 import { runPlaygroundCode } from "../../../api/submission";
-import { GradientButton } from "../../common/components/gradientButton";
+import { GradientButton } from "../../common/components/GradientButton";
 import { Editor } from "../../problemSet/components/Editor";
 
 import { useNavigate, useParams } from "react-router-dom";

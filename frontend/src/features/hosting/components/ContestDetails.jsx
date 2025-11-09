@@ -1,5 +1,5 @@
 import { TrophyIcon } from "@heroicons/react/24/outline";
-import { GradientButton } from "../../common/components/gradientButton";
+import { GradientButton } from "../../common/components/GradientButton";
 
 export const ContestDetails = ({ formData, setStep, handleContestChange }) => {
   return (

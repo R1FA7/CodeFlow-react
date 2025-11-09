@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { getProblem } from "../../../api/problems";
 import { submitProblem } from "../../../api/submission";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
-import { GradientButton } from "../../common/components/gradientButton";
+import { GradientButton } from "../../common/components/GradientButton";
 import { LoadingSpinner } from "../../common/components/LoadingSpinner";
 import { Editor } from "../components/Editor";
 import { TestCaseCard } from "../components/TestCaseCard";

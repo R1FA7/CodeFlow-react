@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import lpIllustration from "../../../../assets/lp_illustration.svg";
-import { GradientButton } from "../../components/gradientButton";
+import { GradientButton } from "../../components/GradientButton";
 export const HeroSection = () => {
   const navigate = useNavigate();
   return (

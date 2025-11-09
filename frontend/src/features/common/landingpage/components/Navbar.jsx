@@ -5,7 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { logoutUser } from "../../../../api/auth";
 import { useCurrentUser } from "../../../../hooks/useCurrentUser";
-import { GradientButton } from "../../components/gradientButton";
+import { GradientButton } from "../../components/GradientButton";
 import { MobileNavbar } from "./MobileNavbar";
 
 const NavLinks = [

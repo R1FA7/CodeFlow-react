@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { GradientButton } from "../../common/components/gradientButton";
+import { GradientButton } from "../../common/components/GradientButton";
 import { Input } from "./Input";
 
 export const AuthForm = ({

@@ -1,5 +1,5 @@
 import { BellAlertIcon } from "@heroicons/react/24/outline";
-import { GradientButton } from "../../common/components/gradientButton";
+import { GradientButton } from "../../common/components/GradientButton";
 import { ReusableTable } from "../../common/components/Table";
 
 const columns = [

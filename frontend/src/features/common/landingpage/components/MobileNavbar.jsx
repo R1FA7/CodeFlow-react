@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { GradientButton } from "../../components/gradientButton";
+import { GradientButton } from "../../components/GradientButton";
 
 export const MobileNavbar = ({
   NavLinks,

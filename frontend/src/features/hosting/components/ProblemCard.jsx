@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { GradientButton } from "../../common/components/gradientButton";
+import { GradientButton } from "../../common/components/GradientButton";
 
 export const ProblemCard = ({ formData, setStep, addProblem }) => {
   const [currentProblem, setCurrentProblem] = useState({
