@@ -7,6 +7,12 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { loginSchema, signupSchema, updateMeSchema } from "../validations/user.validation.js";
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  maxAge: 24 * 60 * 60 * 1000
+}
 export const signUp = asyncHandler(async(req,res)=>{
   const {name, username, email, password} = signupSchema.parse(req.body)
 
@@ -26,7 +32,7 @@ export const signUp = asyncHandler(async(req,res)=>{
     {expiresIn:'1d'}
   )
 
-  res.cookie('token', token, {httpOnly: true})
+  res.cookie('token', token, cookieOptions)
 
   const safeUser = user.toObject();
   delete safeUser.password;
@@ -52,7 +58,7 @@ export const login = asyncHandler(async(req,res)=>{
     {expiresIn:'1d'}
   )
 
-  res.cookie('token', token, {httpOnly: true})
+  res.cookie('token', token, cookieOptions)
 
   const safeUser = user.toObject();
   delete safeUser.password;
