@@ -14,7 +14,7 @@ export const getPastProblem = asyncHandler(async(req,res)=>{
 
 export const getAllPastProblems = asyncHandler(async(req,res)=>{
   let problems = await Problem.find({
-    contest: {$ne: null}
+    // contest: {$ne: null}
   }).populate("contest");
   let result = [];
   const currentDate = new Date();

@@ -56,7 +56,7 @@ export const ReusableTable = ({
     return () => window.removeEventListener("resize", measure);
   }, [isMobile, data, columns]);
   console.log();
-  if (!data.length)
+  if (!data?.length)
     return <p className="text-center font-bold text-gray-200">Nothing here.</p>;
   return (
     <div className="px-6 pb-4 mb-3">

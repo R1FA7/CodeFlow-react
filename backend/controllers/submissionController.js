@@ -18,7 +18,7 @@ export const getAllSubmissions = asyncHandler(async(req,res)=>{
 })
 
 const running = (contest) => {
-  const endTime = new Date(contest.contestDate).getTime() + contest.duration
+  const endTime = new Date(contest?.contestDate).getTime() + contest?.duration
   return new Date().getTime() < endTime ? contest._id : null 
 }
 

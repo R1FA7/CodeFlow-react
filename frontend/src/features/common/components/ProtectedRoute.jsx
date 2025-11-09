@@ -1,14 +1,17 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 const protectedRoutes = ["/host-contest", "/admin"];
 
 export const ProtectedRoute = ({ children }) => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const location = useLocation();
   const requestedPath = location.pathname;
   console.log(user?.data);
-  if (!user) return <Navigate to="/login" replace />;
+  if (isLoading) return <LoadingSpinner />;
+
+  if (!user?.data) return <Navigate to="/login" replace />;
 
   console.log(requestedPath);
   if (protectedRoutes.includes(requestedPath)) {

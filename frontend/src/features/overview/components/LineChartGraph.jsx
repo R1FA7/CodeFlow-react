@@ -41,6 +41,7 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 const LineChartComponent = ({ data, height = 350 }) => {
+  console.log(data);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data}>

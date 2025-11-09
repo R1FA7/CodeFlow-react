@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
   withCredentials: true
 })
 
-let isRedirecting = false 
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
@@ -35,14 +34,7 @@ axiosInstance.interceptors.response.use(
       // Check if current path starts with any of the public paths
       const isPublic = publicPages.some((path) => currentPath.startsWith(path));
 
-      if (!isPublic && !isRedirecting) {
-        isRedirecting=true 
-        if(window.queryClient) window.queryClient.clear()
-
-        window.location.href = "/login";
-
-        setTimeout(()=>{isRedirecting=false},1000)
-      }
+      if (!isPublic) window.location.href = "/login";
     }
     return Promise.reject({
       message,

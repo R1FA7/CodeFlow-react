@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import Contest from '../models/contest.js';
 import Submission from '../models/submission.js';
 import Transaction from '../models/transaction.js';
+import User from '../models/user.js';
 
 dotenv.config()
 
@@ -18,21 +19,38 @@ agenda.define('rating', async(job)=>{
   console.log(`Running rating job for contest ${contestId}`);
   await updateUserRatings(contestId)
   await updateProblemRatings(contestId)
+  console.log(`Rating job completed for contest ${contestId}`);
 })
 
 const updateUserRatings = async (contestId)=>{
   const submissions = await Submission.find({contest:contestId}).select('submittedBy message')
   const userIds = [...new Set(submissions.map(s=>s.submittedBy.toString()))]
 
+  console.log(`Processing ratings for ${userIds.length} users`); 
+
+  // Check for existing transactions
   const existingTx = await Transaction.find({ contest: contestId, user: { $in: userIds } });
   const existingUsers = existingTx.map(tx => tx.user.toString());
 
+  // Create new transactions for users who don't have one
   const newTx = userIds
     .filter(u => !existingUsers.includes(u))
     .map(u => ({ contest: contestId, user: u, delta: 0 }));
 
-  if(newTx.length) await Transaction.insertMany(newTx)
+  if(newTx.length) {
+    const insertedTx = await Transaction.insertMany(newTx);
+    console.log(`Created ${insertedTx.length} new transactions`); // DEBUG
+    
+    // Add transaction IDs to user's transactions array
+    for(const tx of insertedTx) {
+      await User.findByIdAndUpdate(
+        tx.user,
+        { $addToSet: { transactions: tx._id } } 
+      );
+    }
+  }
   
+  // Update transaction deltas based on submissions
   const updates = submissions.map(sub=>({
     updateOne: {
       filter: {contest: contestId, user: sub.submittedBy},
@@ -40,7 +58,12 @@ const updateUserRatings = async (contestId)=>{
     }
   }))
 
-  if(updates.length) await Transaction.bulkWrite(updates)
+  if(updates.length) {
+    const result = await Transaction.bulkWrite(updates);
+    console.log(`Updated ${result.modifiedCount} transactions`);
+  }
+  
+  console.log(`User ratings updated`); // DEBUG
 }
 
 const updateProblemRatings = async (contestId)=>{
@@ -51,14 +74,27 @@ const updateProblemRatings = async (contestId)=>{
     const acceptedSubs = await Submission.find({
       problem: problem._id,
       message:'Accepted'
-    }).populate('submittedBy', 'rating')
+    }).populate('submittedBy', 'transactions')
 
-    const usersRating = acceptedSubs.map(s=>s.submittedBy.rating).filter(r=>r!=null)
-    const modeRating = calculateModeByRange(usersRating, Math.round(Math.sqrt(usersRating.length)))
+    // Get user ratings 
+    const usersRatings = await Promise.all(
+      acceptedSubs.map(async (sub) => {
+        const rating = await sub.submittedBy.rating();
+        return Number(rating) || 0;
+      })
+    );
 
-    problem.rating = modeRating || problem.rating 
-    await problem.save()
+    const validRatings = usersRatings.filter(r => r > 0);
+    
+    if(validRatings.length > 0) {
+      const modeRating = calculateModeByRange(validRatings, Math.round(Math.sqrt(validRatings.length)));
+      problem.rating = modeRating || problem.rating;
+      await problem.save();
+      console.log(`Problem ${problem.id}: rating = ${problem.rating}`); 
+    }
   }
+  
+  console.log(`Problem ratings updated`);
 }
 
 const calculateModeByRange = (arr, rangeSize)=> {
@@ -84,3 +120,4 @@ const calculateModeByRange = (arr, rangeSize)=> {
 await agenda.start()
 
 export { agenda, updateProblemRatings, updateUserRatings };
+

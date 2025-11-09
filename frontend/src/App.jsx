@@ -17,6 +17,7 @@ import { PlaygroundPage } from "./features/playground/pages/PlaygroundPage";
 import { ProblemPage } from "./features/problemSet/pages/ProblemPage";
 import { ProblemSetPage } from "./features/problemSet/pages/ProblemSetPage";
 import { SubmissionsPage } from "./features/submission/SubmissionsPage";
+
 const router = createBrowserRouter([
   {
     path: "/",

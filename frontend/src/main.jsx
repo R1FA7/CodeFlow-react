@@ -9,13 +9,17 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       gcTime: 1000 * 60 * 60 * 24,
-      staleTime: 1000 * 60 * 5,
+      staleTime: 10000,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
     },
   },
 });
 
 const persister = createSyncStoragePersister({
   storage: window.localStorage,
+  key: "codeflow-cache",
 });
 
 createRoot(document.getElementById("root")).render(

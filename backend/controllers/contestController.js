@@ -92,30 +92,35 @@ export const createContest = asyncHandler(async(req,res)=>{
 
   const round = await Contest.countDocuments()+1
 
+  //create contest for contest id
+
+  const contest = new Contest({
+    level, contestDate, duration, round, problems:[], setter: req.user.id
+  })
+
+  await contest.save()
+
+  //create problems with that c id ref.
   const insertedProblems = await Promise.all(
     problems.map(async(problem)=>{
       const testCases = problem.testCases.map(tc=>new TestCase(tc))
       const insertedTcs = await TestCase.insertMany(testCases)
 
       const newProblem = new Problem({
-        ...problem,
-        testCases: insertedTcs.map(tc=>tc._id)
+        id: problem.id,
+        title: problem.title,
+        statement: problem.statement,
+        contest: contest._id, 
+        testCases: insertedTcs.map(tc=>tc._id),
+        samples: problem.samples || 2,
+        checker: problem.checker || 'default', 
+        rating: 0
       })
-
       return newProblem.save()
     })
   )
-  const probIds = insertedProblems.map(p=>p._id)
 
-  const contest = new Contest({
-    level,
-    contestDate,
-    duration,
-    round,
-    problems: probIds,
-    setter: req.user.id
-  })
-
+  contest.problems = insertedProblems.map(p=>p._id)
   await contest.save()
   await contest.populate('problems')
   res.status(201).json(new ApiResponse(201,contest,'Contest created successfully'))

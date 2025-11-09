@@ -69,9 +69,11 @@ export const AdminPage = () => {
         alert("Please select a date and time");
         return;
       }
+      const localTime = new Date(scheduleData.date);
+      const utcTime = localTime.toISOString();
       mutateAcceptContest({
         id: selectedContest.contestId,
-        date: scheduleData.date,
+        date: utcTime,
       });
     } else if (modalType === "reject") {
       mutateRejectContest(selectedContest.contestId);
