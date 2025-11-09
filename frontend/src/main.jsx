@@ -1,6 +1,4 @@
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
@@ -17,16 +15,16 @@ const queryClient = new QueryClient({
   },
 });
 
-const persister = createSyncStoragePersister({
-  storage: window.localStorage,
-  key: "codeflow-cache",
-});
+// const persister = createSyncStoragePersister({
+//   storage: window.localStorage,
+//   key: "codeflow-cache",
+// });
 
 createRoot(document.getElementById("root")).render(
-  <PersistQueryClientProvider
+  <QueryClientProvider
     client={queryClient}
-    persistOptions={{ persister }}
+    // persistOptions={{ persister }}
   >
     <App />
-  </PersistQueryClientProvider>
+  </QueryClientProvider>
 );
