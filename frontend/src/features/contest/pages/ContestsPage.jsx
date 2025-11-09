@@ -97,7 +97,7 @@ export const ContestsPage = () => {
             Currently no Live contest is available.
           </p>
         )
-      ) : tabData.length > 0 ? (
+      ) : tabData?.length > 0 ? (
         <ReusableTable
           columns={columns}
           scale={0.7}

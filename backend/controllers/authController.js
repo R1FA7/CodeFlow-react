@@ -137,7 +137,7 @@ export const updateMe = asyncHandler(async (req, res) => {
   );
 });
 
-export const getUserOverview=asyncHandler(async (req, res) => {
+export const getUserOverview = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).populate({
     path: "transactions",
     model: "Transaction",
@@ -147,23 +147,25 @@ export const getUserOverview=asyncHandler(async (req, res) => {
   if (!user) throw new ApiError(404, "User not found");
 
   const transactions = user.transactions || []
+
   // Overview
   const solvedProblemsCount = Number(
     await Submission.countDocuments({ submittedBy: user._id, message: "Accepted" })
   ) || 0;
 
-  const rating = Number(await user.rating()) || 0
+  const ratingValue = await user.rating();
+  const rating = Number(ratingValue) || 0; 
 
   const overview = {
     rating,
-    admin: user.admin,
-    contestCount: user.transactions.length || 0,
+    admin: user.admin || false,
+    contestCount: transactions.length || 0,
     solvedProblemsCount,
   };
 
   // rating history
   let cumulative = 0;
-  const ratingHistory = user.transactions.map((t) => {
+  const ratingHistory = transactions.map((t) => {
     const delta = Number(t.delta) || 0
     cumulative += delta;
     return {
@@ -177,4 +179,4 @@ export const getUserOverview=asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, data, "User overview data fetched successfully"));
-})
+});
