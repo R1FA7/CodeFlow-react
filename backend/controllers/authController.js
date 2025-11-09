@@ -175,7 +175,7 @@ export const getUserOverview = asyncHandler(async (req, res) => {
   });
 
   const data = { overview, ratingHistory };
-
+  console.log(data)
   return res
     .status(200)
     .json(new ApiResponse(200, data, "User overview data fetched successfully"));

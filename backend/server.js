@@ -11,6 +11,8 @@ import { contestRouter } from './routes/contestRouter.js'
 import { problemRouter } from './routes/problemRouter.js'
 import { submissionRouter } from './routes/submissionRouter.js'
 
+connectDB()
+
 dotenv.config()
 
 const app = express()
@@ -30,7 +32,6 @@ app.use('/api/v1/codeShare',codeShareRouter)
 app.use('/api/v1/submission', submissionRouter)
 app.use('/api/v1/admin', adminRouter)
 
-connectDB()
 
 app.use(errorHandler)
 

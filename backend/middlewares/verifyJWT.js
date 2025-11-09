@@ -8,13 +8,16 @@ export const verifyJWT = async (req,res,next) => {
 
     // const token = authHeader.split(' ')[1]
     const token = req.cookies.token 
-    if(!token) throw new ApiError(401, 'No token found')
+    if(!token) {
+      console.log('No token in cookies')
+      throw new ApiError(401, 'No token found')
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.user = {id: decoded.id}
     next()
   } catch (error) {
-    console.error(error)
-    res.status(401).json({ message: 'Invalid or expired token' });
+    console.error('JWT Error:', error.message);
+    res.status(401).json({ success: false, message: 'Invalid or expired token' });
 
   }
 }
