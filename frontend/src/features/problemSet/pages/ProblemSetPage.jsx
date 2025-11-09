@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProblem, getProblems } from "../../../api/problems";
+import { getProblems } from "../../../api/problems";
 import { LoadingSpinner } from "../../common/components/LoadingSpinner";
 import { ReusableTable } from "../../common/components/Table";
 export const ProblemSetPage = () => {
@@ -9,12 +9,6 @@ export const ProblemSetPage = () => {
     queryKey: ["problems"],
     queryFn: getProblems,
   });
-
-  const { db } = useQuery({
-    queryKey: ["problems"],
-    queryFn: getProblem,
-  });
-  console.log(db?.data);
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <p>Error occurred</p>;

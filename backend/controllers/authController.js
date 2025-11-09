@@ -67,8 +67,9 @@ export const logout = asyncHandler(async(req,res)=>{
 
 export const getMe = asyncHandler(async(req,res)=>{
   const loggedUser = await User.findById(req.user.id)
+  if(!loggedUser) throw new ApiError(401, 'No user')
   res.status(200).json(new ApiResponse(200,{
-    name: loggedUser.name, username: loggedUser.username, email: loggedUser.email, admin:loggedUser.admin || false, setter: loggedUser.setter 
+    name: loggedUser.name, username: loggedUser.username, email: loggedUser.email, admin:loggedUser.admin, setter: loggedUser.setter 
   }, 'Fetched user successfully'))
 })
 export const updateMe = asyncHandler(async (req, res) => {

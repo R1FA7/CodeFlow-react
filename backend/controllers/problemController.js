@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const getPastProblem = asyncHandler(async(req,res)=>{
+  console.log('from problem cont',req.params)
   let problem = await Problem.findById(req.params.id).populate('testCases')
   if(!problem) throw new ApiError(404,'Problem not found')
   problem.testCases = problem.testCases.splice(0,2)
@@ -12,7 +13,9 @@ export const getPastProblem = asyncHandler(async(req,res)=>{
 })
 
 export const getAllPastProblems = asyncHandler(async(req,res)=>{
-  let problems = await Problem.find().populate("contest");
+  let problems = await Problem.find({
+    contest: {$ne: null}
+  }).populate("contest");
   let result = [];
   const currentDate = new Date();
   for (let i = 0; i < problems.length; i++) {

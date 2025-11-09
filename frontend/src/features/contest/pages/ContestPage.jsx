@@ -37,8 +37,8 @@ export const ContestPage = () => {
     navigate(`problems/${problem._id}`);
   };
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-center mb-5 ml-4 md:ml-0 text-fuchsia-600">
+    <div className="flex flex-col gap-4 p-4 md:p-6">
+      <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent text-center">
         {data?.contestName}
       </h1>
       <ReusableTable

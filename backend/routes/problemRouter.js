@@ -3,8 +3,9 @@ import { getAllPastProblems, getPastProblem } from '../controllers/problemContro
 
 const problemRouter = Router()
 
-problemRouter.get('/:id',getPastProblem)
+
 problemRouter.get('/',getAllPastProblems)
+problemRouter.get('/:id',getPastProblem)
 
 export { problemRouter }
 

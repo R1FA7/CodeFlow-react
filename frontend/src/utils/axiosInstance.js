@@ -19,10 +19,22 @@ axiosInstance.interceptors.response.use(
     const statusCode = error?.status
     console.log(message, success, statusCode)
     if (error.response?.status === 401) {
-      // Only redirect if not on public pages
-      const publicPages = ["/", "/login", "/register",'/contests','/problemset','/playground','/unauthorized'];
-      console.log("HI")
-      if (!publicPages.includes(window.location.pathname)) {
+      const publicPages = [
+        "/",
+        "/login",
+        "/register",
+        "/contests",
+        "/problemset",
+        "/playground",
+        "/unauthorized",
+        "/problems",
+      ];
+      const currentPath = window.location.pathname;
+
+      // Check if current path starts with any of the public paths
+      const isPublic = publicPages.some((path) => currentPath.startsWith(path));
+
+      if (!isPublic) {
         window.location.href = "/login";
       }
     }

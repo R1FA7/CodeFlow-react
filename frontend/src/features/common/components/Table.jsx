@@ -55,10 +55,12 @@ export const ReusableTable = ({
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, [isMobile, data, columns]);
-
+  console.log();
+  if (!data.length)
+    return <p className="text-center font-bold text-gray-200">Nothing here.</p>;
   return (
     <div className="px-6 pb-4 mb-3">
-      {/* IMPORTANT: prevent horizontal scroll on mobile */}
+      {/*prevent horizontal scroll on mobile */}
       <div className="overflow-x-hidden">
         {/* Wrapper that reserves only the scaled height on mobile */}
         <div

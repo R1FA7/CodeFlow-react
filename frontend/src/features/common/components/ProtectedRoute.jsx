@@ -7,15 +7,14 @@ export const ProtectedRoute = ({ children }) => {
   const { data: user } = useCurrentUser();
   const location = useLocation();
   const requestedPath = location.pathname;
-
+  console.log(user?.data);
   if (!user) return <Navigate to="/login" replace />;
 
+  console.log(requestedPath);
   if (protectedRoutes.includes(requestedPath)) {
-    // Example: only "setters" can host contests
     if (!user?.data?.setter && requestedPath === "/host-contest")
       return <Navigate to="/unauthorized" replace />;
-    // Example: only non-setters can access admin
-    if (user?.data?.setter && requestedPath === "/admin")
+    if (!user?.data?.admin && requestedPath === "/admin")
       return <Navigate to="/unauthorized" replace />;
   }
 

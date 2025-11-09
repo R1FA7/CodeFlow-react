@@ -13,7 +13,7 @@ export const loginUser = async(formData) => {
 
 export const getMe = async() => {
   const res = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO)
-  return res
+  return res 
 }
 
 export const logoutUser = async() => {

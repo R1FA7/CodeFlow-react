@@ -3,9 +3,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { logoutUser } from "../../../api/auth";
-import { useCurrentUser } from "../../../hooks/useCurrentUser";
-import { GradientButton } from "./gradientButton";
+import { logoutUser } from "../../../../api/auth";
+import { useCurrentUser } from "../../../../hooks/useCurrentUser";
+import { GradientButton } from "../../components/gradientButton";
+import { MobileNavbar } from "./MobileNavbar";
 
 const NavLinks = [
   { id: 1, name: "Contests", link: "/contests" },
@@ -18,15 +19,16 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
+  console.log("NAVBAR", user?.data);
 
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: logoutUser,
     onSuccess: (response) => {
       queryClient.setQueryData(["currentUser"], null);
-      queryClient.clear();
+      queryClient.invalidateQueries(["currentUser"]);
       navigate("/");
-      toast.success(response?.message || "Logged out successfully");
+      toast.success(response?.message || "Logged out");
     },
     onError: (error) => {
       console.error("Logout error:", error);
@@ -40,7 +42,7 @@ export const Navbar = () => {
 
   return (
     <nav className="bg-gray-900 text-gray-100 shadow-lg relative">
-      <div className="max-w-7xl mx-auto flex justify-between items-center p-5">
+      <div className="max-w-7xl mx-auto flex justify-between items-center py-5">
         {/* Logo */}
         <button
           onClick={() => navigate("/")}
@@ -75,7 +77,7 @@ export const Navbar = () => {
               disabled={logoutMutation.isPending}
               loading={logoutMutation.isPending}
             >
-              {logoutMutation.isPending ? "Logging out..." : "Logout"}
+              Logout
             </GradientButton>
           ) : (
             <GradientButton
@@ -103,60 +105,15 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-20 right-5 w-48 bg-gray-800/95 backdrop-blur-md border border-gray-700 p-5 shadow-2xl shadow-indigo-500/20 flex flex-col gap-4 rounded-xl z-50 animate-slideIn">
-          {NavLinks.map((nav) => (
-            <NavLink
-              to={nav.link}
-              className="hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 text-left py-2 px-3 rounded-lg hover:bg-gray-700/50"
-              key={nav.id}
-              onClick={() => setIsOpen(false)}
-            >
-              {nav.name}
-            </NavLink>
-          ))}
-          <div className="border-t border-gray-700 pt-3 mt-2">
-            {user?.data ? (
-              <GradientButton
-                className="w-full px-6 py-3"
-                onClick={() => {
-                  handleLogout();
-                  setIsOpen(false);
-                }}
-                disabled={logoutMutation.isPending}
-                loading={logoutMutation.isPending}
-              >
-                {logoutMutation.isPending ? "Logging out..." : "Logout"}
-              </GradientButton>
-            ) : (
-              <GradientButton
-                className="w-full px-6 py-3"
-                onClick={() => {
-                  navigate("/login");
-                  setIsOpen(false);
-                }}
-              >
-                Login
-              </GradientButton>
-            )}
-          </div>
-        </div>
+        <MobileNavbar
+          NavLinks={NavLinks}
+          onClose={() => setIsOpen(false)}
+          user={user}
+          onLogOut={handleLogout}
+          isPending={logoutMutation.isPending}
+          onLogin={() => navigate("/login")}
+        />
       )}
-
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-slideIn {
-          animation: slideIn 0.2s ease-out;
-        }
-      `}</style>
     </nav>
   );
 };

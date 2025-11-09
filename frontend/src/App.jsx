@@ -6,6 +6,7 @@ import { RegisterPage } from "./features/auth/pages/RegisterPage";
 import { SettingsPage } from "./features/auth/pages/SettingsPage";
 import { DashboardLayout } from "./features/common/components/DashboardLayout";
 import { ProtectedRoute } from "./features/common/components/ProtectedRoute";
+import { PublicRoute } from "./features/common/components/PublicRoute";
 import { Unauthorized } from "./features/common/components/Unauthorized";
 import { LandingPage } from "./features/common/landingpage/pages/LandingPage";
 import { ContestPage } from "./features/contest/pages/ContestPage";
@@ -23,11 +24,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/register",
-    element: <RegisterPage />,
+    element: (
+      <PublicRoute>
+        <RegisterPage />
+      </PublicRoute>
+    ),
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: (
+      <PublicRoute>
+        <LoginPage />,
+      </PublicRoute>
+    ),
   },
   {
     path: "/overview",
@@ -92,9 +101,11 @@ const router = createBrowserRouter([
   {
     path: "/submissions",
     element: (
-      <DashboardLayout>
-        <SubmissionsPage />
-      </DashboardLayout>
+      <ProtectedRoute>
+        <DashboardLayout>
+          <SubmissionsPage />
+        </DashboardLayout>
+      </ProtectedRoute>
     ),
   },
   {

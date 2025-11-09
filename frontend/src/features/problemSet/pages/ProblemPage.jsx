@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getProblem } from "../../../api/problems";
 import { submitProblem } from "../../../api/submission";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { GradientButton } from "../../common/components/gradientButton";
 import { LoadingSpinner } from "../../common/components/LoadingSpinner";
 import { Editor } from "../components/Editor";
@@ -13,6 +14,7 @@ export const ProblemPage = () => {
   const { problemId } = useParams();
   const [code, setCode] = useState("//Write your code here...\n\n\n\n\n");
   const [language, setLanguage] = useState("cpp");
+  const { data: user } = useCurrentUser();
 
   const { data: problem, isLoading } = useQuery({
     queryKey: ["problem", problemId],
@@ -38,6 +40,10 @@ export const ProblemPage = () => {
   });
 
   const handleSubmit = () => {
+    if (!user) {
+      toast.error("Please login to submit");
+      return;
+    }
     console.log("Submitting code:", code, language, problemId);
     if (!problemId || !code.trim()) return;
     mutateSubmitProblem({
@@ -48,7 +54,7 @@ export const ProblemPage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-5rem)] flex flex-col">
+    <div className="flex flex-col gap-4 p-4 md:p-6">
       {/* Header */}
       <div className="bg-slate-800 border-b border-slate-700 px-6 py-3 text-center">
         <h1 className="text-xl font-bold text-gray-100">{problem?.title}</h1>

@@ -1,9 +1,9 @@
-import { Footer } from "../../components/Footer";
-import { Navbar } from "../../components/Navbar";
 import { CTASection } from "../components/CTASection";
 import { FeaturesSection } from "../components/FeatureSection";
+import { Footer } from "../components/Footer";
 import { HeroSection } from "../components/HeroSection";
 import { HowItWorksSection } from "../components/HowItWorksSection";
+import { Navbar } from "../components/Navbar";
 
 export const LandingPage = () => {
   return (
