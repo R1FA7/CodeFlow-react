@@ -18,6 +18,7 @@ export const DashboardLayout = ({ children }) => {
     onSuccess: (response) => {
       queryClient.setQueryData(["currentUser"], null);
       queryClient.invalidateQueries(["currentUser"]);
+      // queryClient.clear();
       navigate("/");
       toast.success(response?.message || "Logged out");
     },
