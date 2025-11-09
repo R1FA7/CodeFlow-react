@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async()=>{
   try{
-    await mongoose.connect(process.env.MONGODB_URI)
+    await mongoose.connect(`${process.env.MONGODB_URI}/codeflow`)
     console.log("DB connected")
   } catch(err){
     console.log("DB connection failed ",err.message)

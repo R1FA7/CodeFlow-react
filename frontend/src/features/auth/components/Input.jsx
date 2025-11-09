@@ -17,6 +17,7 @@ export const Input = ({
       <input
         type={type === "password" ? (showPassword ? "text" : "password") : type}
         value={value}
+        autoComplete="on"
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => !value && setFocused(false)}
