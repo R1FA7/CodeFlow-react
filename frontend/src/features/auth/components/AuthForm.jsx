@@ -13,7 +13,6 @@ export const AuthForm = ({
   disabled,
   isLoading,
 }) => {
-  console.log(fields);
   const [formData, setFormData] = useState(
     fields.reduce((acc, field) => ({ ...acc, [field]: "" }), {})
   );
@@ -30,11 +29,6 @@ export const AuthForm = ({
       className="flex flex-col gap-6 items-center w-full md:w-80"
       onSubmit={submitHandler}
     >
-      <p className="text-xs mb-2 text-center">
-        For admin login use
-        <br />
-        Email: admin@codeflow.com, Password: 123456
-      </p>
       <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">
         {header}
       </h1>

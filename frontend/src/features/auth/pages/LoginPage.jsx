@@ -49,6 +49,11 @@ export const LoginPage = () => {
       {/* Right Side – Auth Form */}
       <div className="w-full md:w-2/3 bg-linear-to-br from-slate-900 via-slate-800 to-purple-950 flex justify-center items-center">
         <div className="bg-slate-800/70 backdrop-blur-lg p-12 rounded-2xl shadow-2xl border border-purple-700/30">
+          <p className="text-xs mb-2 text-center">
+            For admin login use
+            <br />
+            Username: admin, Password: 123456
+          </p>
           <AuthForm
             header="Sign in"
             type="Sign in"
