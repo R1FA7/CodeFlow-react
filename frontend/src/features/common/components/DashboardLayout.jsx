@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { logoutUser } from "../../../api/auth";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
-import { GradientButton } from "./gradientButton";
+import { GradientButton } from "./GradientButton.jsx";
 import { Sidebar } from "./Sidebar";
 
 export const DashboardLayout = ({ children }) => {
